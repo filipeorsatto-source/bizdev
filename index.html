@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rivio · Central Bizdev</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080b10;
+    --surface: rgba(255,255,255,0.035);
+    --surface-hover: rgba(255,255,255,0.07);
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(255,255,255,0.18);
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --glow: rgba(59,130,246,0.15);
+    --glow-hover: rgba(59,130,246,0.3);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BACKGROUND */
+  .bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .bg-glow-1 {
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
+    top: -200px;
+    right: -100px;
+  }
+
+  .bg-glow-2 {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%);
+    bottom: 0;
+    left: -100px;
+  }
+
+  /* LAYOUT */
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px 0 0;
+  }
+
+  .logo img {
+    height: 112px;
+    opacity: 0.9;
+  }
+
+  
+
+  /* HERO */
+  .hero {
+    padding: 80px 0 64px;
+    text-align: center;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.1s;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(38px, 6vw, 64px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,0.5));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.2s;
+  }
+
+  .hero p {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 440px;
+    margin: 0 auto;
+    line-height: 1.7;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.3s;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeIn 0.8s ease forwards 0.4s;
+  }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  /* CARD */
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background: radial-gradient(circle at 50% 0%, var(--glow), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .card:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px var(--border-hover), 0 -1px 0 rgba(255,255,255,0.05) inset;
+  }
+
+  .card:hover::before {
+    opacity: 1;
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .card-arrow {
+    color: var(--muted);
+    font-size: 14px;
+    opacity: 0.5;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .card:hover .card-arrow {
+    opacity: 1;
+    color: var(--accent2);
+    transform: translate(2px, -2px);
+  }
+
+  .card-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 72px;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(107,114,128,0.5);
+    letter-spacing: 0.04em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .card:nth-child(1) { animation-delay: 0.45s; }
+  .card:nth-child(2) { animation-delay: 0.5s; }
+  .card:nth-child(3) { animation-delay: 0.55s; }
+  .card:nth-child(4) { animation-delay: 0.6s; }
+  .card:nth-child(5) { animation-delay: 0.65s; }
+  .card:nth-child(6) { animation-delay: 0.7s; }
+  .card:nth-child(7) { animation-delay: 0.75s; }
+  .card:nth-child(8) { animation-delay: 0.8s; }
+  .card:nth-child(9) { animation-delay: 0.85s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .hero { padding: 52px 0 48px; }
+    header { padding-top: 24px; }
+  }
+
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 36px; }
+    .badge { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer">
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+</div>
+
+<div class="wrapper">
+
+  <header>
+    <div class="logo">
+      <img src="data:image/jpeg;base64,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g5EXmA++X//EACgQAQABAwEIAgMBAQAAAAAAAAERACExYRAgQVFxgZGhsfAwcMHx0f/aAAgBAQABPyH9/S+Ljl4K+s/ystYCDs1lBsA7hSaLgcJ1KC/srRNGKfyMFCPJ2AqC7SoMJVt+qQA6ASrRuBQ0HNY2uBTL8LSKUT78KRuOyEJ+BQWXbzvHheFR0Deier5dV2BraMERgYTU2sw4amjm77Y9isegELRsPMbG7xr2OCesXerpXtZjJ4jubn4yR84i5xxBybHXGPUyUaClChC8CstxXw5D/HFNpKRSBcOjwTmb5z6miQfbNPQhluElrAH+7rMNkP3m05PEdFrg8GZ4B42NuqRuoe/QVlqYGLPpj2dv4yA2oEzDxNEAebHDLSUq8wdJNiz9DmQScgi25nWodLdqh9/gDubdTML+G8QGuRIF/wDvD2pTkflqPIlQ8tYmE2u69taqsuSX53PxmD1W2+j5H4ep3NvJmGzoc9g+fmmL1nYKaW9oqdSHr7u5+M+lCCfhNAyElwpPSmKXVERY1rA1KCamQNICiY6CNZ0o4F1Ee+Po78+gMAULclSnaFGpBNbmCQpsDKhQnG0+TR94kQXrO4kNsUmj5GxCFgFVqXBQAHYAJ2xeTIvBw/1SUtcrRICxxMKBSC2I9Fu/3RfDkZPq1V/cv//aAAwDAQACAAMAAAAQ8888888888888888888888888888888888888888888888888888888888888888884coQcYo4gY8884UoQ00oY88888scocU8ksQU8888888888888888888888888888888888888888888888888888888888888888888//EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQMBAT8QKf/EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQIBAT8QKf/EACQQAQABAwQCAgMBAAAAAAAAAAERACFREDFBYYHwIHEwcJGh/9oACAEBAAE/EP38PG0iT4F0RROTuqgkgJIj9JRG7kKZiyBuO1SEyHfhLj90HOrl1xCCOSnzFRDMINxG0OhgFGAN2nciDgF1VsKOT5okwAG6vFFmaS0lRAAFV1UoEDg9oacAhKphRJEyhGEdvwERM4glGNhAC2CE2MGiZRQtMz3J70Qc2cKYxowgw2RONBXtsFXPCclOjwekqsiZCDB95laLr1iJSjkCMYVW6gBQDXJBIcPwkHKa5TM6XLAhLQkiqAPsI/bWxB0UsRoEFeiliSDSxZyU2ZS7SNQB8k7EhvAjIYS6QvyIWRDv4OlPKkMX3IMWyAJ2BiJTqK9tgo5jCwBxwySHFJo49RKj4wxfTTbS5LjCmJZ5HqxoSkokeB0usg5Erczb+wIPNBWt+bVlhMMDTZJrmO+A2AsAAAaPp/8AzhM3YdkCAskZtf3gefRP4K3pM/CK9tgo0+UoEyI8I0oi6C8igwxexmpcuMcucCXA0bFttQGPqB32138mVX/q1QcvX4flgdk9b0mfhFe2waT7Dhr6f/IO+aFOCaWKMOYEvDD1vlCVxAB3I+Ag5S92bLykO6HuldwINwGxuU/ucgEMc88IjSIAldipH+VOQ1cEBSE0tRdB2WZcJwCjPU/NAQAsTfhemoei4wmeZqSeoYmYmmNoLkSDZ04wpi5hcso7B4oiBHkCSIztXKMcEykyi6OghlQQASLSUdAlWMCdAVKAUrCHgAMECAUgmfKRGRQaQt8jFWZpGQjjviSGVlthWYHhprLXHBKryhd/cv8A/9k=" alt="Rivio">
+    </div>
+  </header>
+
+  <section class="hero">
+    <p class="hero-eyebrow">Rivio Workspace · Acesso Rápido</p>
+    <h1>Central Bizdev</h1>
+  
+  </section>
+
+  <div class="divider"></div>
+
+  <div class="grid">
+
+    <a href="https://one.rivio.com.br/entrar" target="_blank" rel="noopener" class="card">
+      <div class="card-top">
+        <div class="card-icon">🚀</div>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-name">Plataforma Rivio</div>
+      <div class="card-desc">Acesso à visão do cliente no produto 2.0</div>
+    </a>
+
+    <a href="https://rivio.retool.com/auth/login" target="_blank" rel="noopener" class="card">
+      <div class="card-top">
+        <div class="card-icon">🛠</div>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-name">Retool</div>
+      <div class="card-desc">Dados do backoffice de faturamento</div>
+    </a>
+
+    <a href="https://rivio.pipedrive.com/" target="_blank" rel="noopener" class="card">
+      <div class="card-top">
+        <div class="card-icon">🤝</div>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-name">Pipedrive</div>
+      <div class="card-desc">Gestão das interações com clientes</div>
+    </a>
+
+    <a href="https://www.notion.so/Bem-vindo-ao-Notion-2bec085d9f0a80da8751ce7ab72dffb7" target="_blank" rel="noopener" class="card">
+      <div class="card-top">
+        <div class="card-icon">📚</div>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-name">Notion</div>
+      <div class="card-desc">Documentação técnica dos clientes</div>
+    </a>
+
+    <a href="http://linear.app/rivio-tech/" target="_blank" rel="noopener" class="card">
+      <div class="card-top">
+        <div class="card-icon">⚡</div>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-name">Linear</div>
+      <div class="card-desc">Controle de chamados de desenvolvimento</div>
+    </a>
+
+    <a href="https://receita.riviobizdev.com/" target="_blank" rel="noopener" class="card">
+      <div class="card-top">
+        <div class="card-icon">📈</div>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-name">Monitoramento de Receita</div>
+      <div class="card-desc">Premissas e projeções de receita</div>
+    </a>
+
+    <a href="http://projetos.riviobizdev.com/" target="_blank" rel="noopener" class="card">
+      <div class="card-top">
+        <div class="card-icon">🗂</div>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-name">Gestão de Projetos</div>
+      <div class="card-desc">Acompanhamento de projetos com clientes</div>
+    </a>
+
+    <a href="https://app.powerbi.com/groups/me/apps/4cc75315-4d57-4293-8fb1-8ed00270d12c/reports/b5648bd1-994c-49bb-a89a-3e88c3cf3cc9/12e42f835287965eb2c7?ctid=334f4209-63cb-4bd4-91fb-267356e0591e&language=pt-BR&experience=power-bi" target="_blank" rel="noopener" class="card">
+      <div class="card-top">
+        <div class="card-icon">📊</div>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-name">Power BI · Farmers KPIs</div>
+      <div class="card-desc">KPIs executivos do negócio</div>
+    </a>
+
+    <a href="https://colaborador.convenia.com.br/painel" target="_blank" rel="noopener" class="card">
+      <div class="card-top">
+        <div class="card-icon">👤</div>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-name">Convênia</div>
+      <div class="card-desc">Reembolsos e dados do colaborador</div>
+    </a>
+
+  </div>
+
+  <footer>
+    <p>© 2026 Rivio · Uso interno</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
