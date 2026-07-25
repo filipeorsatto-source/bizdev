@@ -519,7 +519,7 @@
   const ALLOWED_DOMAIN = 'rivio.com.br';
 
   // Check if already authenticated in this session
-  const savedUser = sessionStorage.getItem('rivio_user');
+  const savedUser = localStorage.getItem('rivio_user');
   if (savedUser) {
     showApp(JSON.parse(savedUser));
   }
@@ -536,7 +536,7 @@
         const user = await res.json();
         const domain = user.email.split('@')[1];
         if (domain === ALLOWED_DOMAIN) {
-          sessionStorage.setItem('rivio_user', JSON.stringify(user));
+          localStorage.setItem('rivio_user', JSON.stringify(user));
           showApp(user);
         } else {
           document.getElementById('auth-error').style.display = 'block';
@@ -556,7 +556,7 @@
   }
 
   function signOut() {
-    sessionStorage.removeItem('rivio_user');
+    localStorage.removeItem('rivio_user');
     location.reload();
   }
 </script>
