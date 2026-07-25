@@ -6,6 +6,7 @@
 <title>Rivio · Central Bizdev</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   :root {
     --bg: #080b10;
@@ -18,11 +19,9 @@
     --accent: #3b82f6;
     --accent2: #06b6d4;
     --glow: rgba(59,130,246,0.15);
-    --glow-hover: rgba(59,130,246,0.3);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -33,7 +32,100 @@
     overflow-x: hidden;
   }
 
-  /* BACKGROUND */
+  /* ── AUTH SCREEN ── */
+  #auth-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #080b10;
+  }
+
+  #auth-screen .bg-grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  .auth-card {
+    position: relative;
+    z-index: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 20px;
+    padding: 48px 40px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  }
+
+  .auth-logo { height: 56px; margin-bottom: 32px; }
+
+  .auth-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .auth-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  .auth-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 13px 20px;
+    background: #fff;
+    color: #1f2937;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .auth-btn:hover { background: #f3f4f6; transform: translateY(-1px); }
+
+  .auth-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+  .auth-error {
+    margin-top: 20px;
+    padding: 12px 16px;
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 8px;
+    color: #f87171;
+    font-size: 13px;
+    display: none;
+  }
+
+  .auth-domain {
+    margin-top: 20px;
+    font-size: 12px;
+    color: rgba(107,114,128,0.4);
+  }
+
+  /* ── MAIN APP ── */
+  #app { display: none; }
+
   .bg-layer {
     position: fixed;
     inset: 0;
@@ -41,7 +133,7 @@
     pointer-events: none;
   }
 
-  .bg-grid {
+  .bg-grid-main {
     position: absolute;
     inset: 0;
     background-image:
@@ -52,25 +144,20 @@
 
   .bg-glow-1 {
     position: absolute;
-    width: 700px;
-    height: 700px;
+    width: 700px; height: 700px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
-    top: -200px;
-    right: -100px;
+    top: -200px; right: -100px;
   }
 
   .bg-glow-2 {
     position: absolute;
-    width: 500px;
-    height: 500px;
+    width: 500px; height: 500px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%);
-    bottom: 0;
-    left: -100px;
+    bottom: 0; left: -100px;
   }
 
-  /* LAYOUT */
   .wrapper {
     position: relative;
     z-index: 1;
@@ -79,7 +166,6 @@
     padding: 0 24px 80px;
   }
 
-  /* HEADER */
   header {
     display: flex;
     align-items: center;
@@ -87,14 +173,36 @@
     padding: 32px 0 0;
   }
 
-  .logo img {
-    height: 112px;
-    opacity: 0.9;
+  .logo img { height: 112px; opacity: 0.9; }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--muted);
   }
 
-  
+  .user-info img {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+  }
 
-  /* HERO */
+  .logout-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .logout-btn:hover { border-color: var(--border-hover); color: var(--text); }
+
   .hero {
     padding: 80px 0 64px;
     text-align: center;
@@ -126,18 +234,6 @@
     animation: fadeUp 0.6s ease forwards 0.2s;
   }
 
-  .hero p {
-    font-size: 16px;
-    color: var(--muted);
-    max-width: 440px;
-    margin: 0 auto;
-    line-height: 1.7;
-    font-weight: 300;
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards 0.3s;
-  }
-
-  /* DIVIDER */
   .divider {
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--border), transparent);
@@ -146,14 +242,28 @@
     animation: fadeIn 0.8s ease forwards 0.4s;
   }
 
-  /* GRID */
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 44px 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards 0.4s;
+  }
+
+  .section-label:first-of-type { margin-top: 0; }
+
   .grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
   }
 
-  /* CARD */
   .card {
     position: relative;
     display: flex;
@@ -188,9 +298,7 @@
     box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px var(--border-hover), 0 -1px 0 rgba(255,255,255,0.05) inset;
   }
 
-  .card:hover::before {
-    opacity: 1;
-  }
+  .card:hover::before { opacity: 1; }
 
   .card-top {
     display: flex;
@@ -199,8 +307,7 @@
   }
 
   .card-icon {
-    width: 40px;
-    height: 40px;
+    width: 40px; height: 40px;
     border-radius: 10px;
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.08);
@@ -239,7 +346,6 @@
     font-weight: 300;
   }
 
-  /* FOOTER */
   footer {
     margin-top: 72px;
     text-align: center;
@@ -248,7 +354,6 @@
     letter-spacing: 0.04em;
   }
 
-  /* ANIMATIONS */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -269,7 +374,6 @@
   .card:nth-child(8) { animation-delay: 0.8s; }
   .card:nth-child(9) { animation-delay: 0.85s; }
 
-  /* RESPONSIVE */
   @media (max-width: 768px) {
     .grid { grid-template-columns: repeat(2, 1fr); }
     .hero { padding: 52px 0 48px; }
@@ -279,124 +383,171 @@
   @media (max-width: 480px) {
     .grid { grid-template-columns: 1fr; }
     .hero h1 { font-size: 36px; }
-    .badge { display: none; }
   }
 </style>
 </head>
 <body>
 
-<div class="bg-layer">
+<!-- ── AUTH SCREEN ── -->
+<div id="auth-screen">
   <div class="bg-grid"></div>
-  <div class="bg-glow-1"></div>
-  <div class="bg-glow-2"></div>
+  <div class="auth-card">
+    <img class="auth-logo" src="data:image/jpeg;base64,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g5EXmA++X//EACgQAQABAwEIAgMBAQAAAAAAAAERACExYRAgQVFxgZGhsfAwcMHx0f/aAAgBAQABPyH9/S+Ljl4K+s/ystYCDs1lBsA7hSaLgcJ1KC/srRNGKfyMFCPJ2AqC7SoMJVt+qQA6ASrRuBQ0HNY2uBTL8LSKUT78KRuOyEJ+BQWXbzvHheFR0Deier5dV2BraMERgYTU2sw4amjm77Y9isegELRsPMbG7xr2OCesXerpXtZjJ4jubn4yR84i5xxBybHXGPUyUaClChC8CstxXw5D/HFNpKRSBcOjwTmb5z6miQfbNPQhluElrAH+7rMNkP3m05PEdFrg8GZ4B42NuqRuoe/QVlqYGLPpj2dv4yA2oEzDxNEAebHDLSUq8wdJNiz9DmQScgi25nWodLdqh9/gDubdTML+G8QGuRIF/wDvD2pTkflqPIlQ8tYmE2u69taqsuSX53PxmD1W2+j5H4ep3NvJmGzoc9g+fmmL1nYKaW9oqdSHr7u5+M+lCCfhNAyElwpPSmKXVERY1rA1KCamQNICiY6CNZ0o4F1Ee+Po78+gMAULclSnaFGpBNbmCQpsDKhQnG0+TR94kQXrO4kNsUmj5GxCFgFVqXBQAHYAJ2xeTIvBw/1SUtcrRICxxMKBSC2I9Fu/3RfDkZPq1V/cv//aAAwDAQACAAMAAAAQ8888888888888888888888888888888888888888888888888888888888888888884coQcYo4gY8884UoQ00oY88888scocU8ksQU8888888888888888888888888888888888888888888888888888888888888888888//EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQMBAT8QKf/EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQIBAT8QKf/EACQQAQABAwQCAgMBAAAAAAAAAAERACFREDFBYYHwIHEwcJGh/9oACAEBAAE/EP38PG0iT4F0RROTuqgkgJIj9JRG7kKZiyBuO1SEyHfhLj90HOrl1xCCOSnzFRDMINxG0OhgFGAN2nciDgF1VsKOT5okwAG6vFFmaS0lRAAFV1UoEDg9oacAhKphRJEyhGEdvwERM4glGNhAC2CE2MGiZRQtMz3J70Qc2cKYxowgw2RONBXtsFXPCclOjwekqsiZCDB95laLr1iJSjkCMYVW6gBQDXJBIcPwkHKa5TM6XLAhLQkiqAPsI/bWxB0UsRoEFeiliSDSxZyU2ZS7SNQB8k7EhvAjIYS6QvyIWRDv4OlPKkMX3IMWyAJ2BiJTqK9tgo5jCwBxwySHFJo49RKj4wxfTTbS5LjCmJZ5HqxoSkokeB0usg5Erczb+wIPNBWt+bVlhMMDTZJrmO+A2AsAAAaPp/8AzhM3YdkCAskZtf3gefRP4K3pM/CK9tgo0+UoEyI8I0oi6C8igwxexmpcuMcucCXA0bFttQGPqB32138mVX/q1QcvX4flgdk9b0mfhFe2waT7Dhr6f/IO+aFOCaWKMOYEvDD1vlCVxAB3I+Ag5S92bLykO6HuldwINwGxuU/ucgEMc88IjSIAldipH+VOQ1cEBSE0tRdB2WZcJwCjPU/NAQAsTfhemoei4wmeZqSeoYmYmmNoLkSDZ04wpi5hcso7B4oiBHkCSIztXKMcEykyi6OghlQQASLSUdAlWMCdAVKAUrCHgAMECAUgmfKRGRQaQt8jFWZpGQjjviSGVlthWYHhprLXHBKryhd/cv8A/9k=" alt="Rivio">
+    <div class="auth-title">Central Bizdev</div>
+    <div class="auth-subtitle">Acesso restrito ao time Rivio.<br>Faça login com sua conta corporativa.</div>
+    <button class="auth-btn" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Entrar com Google
+    </button>
+    <div class="auth-error" id="auth-error">
+      ⚠️ Acesso negado. Use sua conta <strong>@rivio.com.br</strong>.
+    </div>
+    <div class="auth-domain">Apenas contas @rivio.com.br</div>
+  </div>
 </div>
 
-<div class="wrapper">
-
-  <header>
-    <div class="logo">
-      <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wgARCADIAMgDASIAAhEBAxEB/8QAHQABAAIDAQEBAQAAAAAAAAAAAAgJBQYHBAIBA//EABQBAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhADEAAAAYqAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHSDnvvseFaPs3yXpXz7trk+Qm+O18UP3J7zK0gPkfZYWVqkuCKfpsp8pWb82SQNNNAAAmdDGaxy+PPcOHiwqvWwohlncFopOqCVkkCiUHKJa1vGTsLr0sLK+rCYDzaK/PEEl9x5D3AhKAABNaFM0Dj/AA/tvEhYVXrYIQ40Le9EJV9lg3Y8R+ht0fnBn7C69LAyv2xKs2TxHrDWe/3Ix5rpcGDWQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/8QAJRAAAAYCAgICAwEAAAAAAAAAAgMEBQYHATYAFRAgFDUWIXAx/9oACAEBAAEFAv78UUM4XUreGlDIGW3KzgGFiKGBsVmBEHIBc/3mWtbjAQ5GITYsAHwSjUKcdUtxwQchz7wWIjlzshbW6NovyJq5ZKgpVNa30mebjT732Edtlk6uT8rlk7yVWe99NFI/99LNW5XtZp8JDlyFrDiQtWcvsXbJOmlcZPirv7UoSEMcuZzPNfvFb6TPNxrB76aV2uydrF+U2yfDZLge+wkUf++lmrRpEBxkMkdMsbAsWnuCnlNyFRhyuxEAbH7Urqtw7h4rfSZ5uIRZAKOOZcnjTjHT0knHlPFY6sVGLlcf++lmrQnbrC0vxUO5XPqntSuq3DuHit9Jnm48pR74piRSiZ3M9/FaOR/76WatHlwWx9fW0L8xurQrZVfKhiatOsuxwABo9qYNACLW+LA5d4rk4sMKnWcCl/Iq85YJBhUSLFgvffSnkf8A0/Ss8vMX5X1nlIEpDihcSsZSh5IZ+zx8mRSBTJXT+yf/xAAUEQEAAAAAAAAAAAAAAAAAAABw/9oACAEDAQE/ASn/xAAUEQEAAAAAAAAAAAAAAAAAAABw/9oACAECAQE/ASn/xABBEAACAQICAwoKCQQDAAAAAAABAgMABAURECGyEhMiIzFBUWFydCAyQmJxc4GRwdEUNFJwgoSToeEwNUSxY8LS/9oACAEBAAY/Avv+3MaM7dCjOvqdx+kaKSI0bjlVhkaDpbTOp5GWMkUUdSjDlBoMtrMynkIjNFWBVhqIOnM2k4HqzQVRmTyAUWa0nVRrJMZ1ac4oJJR5ik19Tn/TNZEZHoP9DemJjtIhupnHLl0DrNbi3ihsrdeVuT3mv7nZ/rr86xGWGRJom3vJ42zB4tawvsNtGsW9eaayds5bN8vwHWPjTXCLlDervv4vK+ft0WqMucMHHyegcn75VOqtlNdcQnt8b9s6w3vMe0Kxjuc2wdEWJYtFv0kg3UVs/iqOlhzmljluLe0GXBV3CVqxOz/XX51ubuBHJHBnTx19Bp7Obhr40Un218O8ly4bXRUnqCr8zUNjuyLaKIOE5ixz16cL7DbRrFvXmrdWOUN1xD+3xf3yp50XOazO/Ds+V8/ZomxF14y7fJewv850tkjZxWabn8Z1n4VhveY9oVjHc5tg1B1tJrjluEVh1Z66vr1FzaGIlR181SXFzK00znNnY6zokwmRy9s0ZkjB8hh0VZXeXGRz73n1Mp/8jw7nvjbCV+XT46cL7DbRrFvXmgynJhrBFW1y4DieLcyr18jCpMHQZy7/AL0mfPn4p92VE/49jB78h8amuZTupZXLses1hveY9oVjHc5tg1hHeU/3WK+q+I0x+peoe9rst4dz3xthK/Lp8dOF9hto1i3rzovcJc/88X+m+FWuN6uKgKlel/JPuJ9wq3w1G4d027fsL/OXu0Yb3mPaFYx3ObYNYfdv4kM6O3oz11d2YcAXERCvzdRpra8gaCVftDl9HTokxe6iaGPe97hVxkWz5/RVjY58bJNvuXUAR/28O5DOqn6Y3KfMSs1II3hOT26cLBdQdw3P5xrFSNY386LK98mN+H2TqP7UCJUIPnVdyq26hiO8xehf5zOjDe8x7QrGAJFz+hzc/mHRHhmLsREnBhueXIdDfOg8VzBcR9KuGFZ8UPdTF7lLm45oIG3Te3oqS9ujwm1Kg5EXmA++X//EACgQAQABAwEIAgMBAQAAAAAAAAERACExYRAgQVFxgZGhsfAwcMHx0f/aAAgBAQABPyH9/S+Ljl4K+s/ystYCDs1lBsA7hSaLgcJ1KC/srRNGKfyMFCPJ2AqC7SoMJVt+qQA6ASrRuBQ0HNY2uBTL8LSKUT78KRuOyEJ+BQWXbzvHheFR0Deier5dV2BraMERgYTU2sw4amjm77Y9isegELRsPMbG7xr2OCesXerpXtZjJ4jubn4yR84i5xxBybHXGPUyUaClChC8CstxXw5D/HFNpKRSBcOjwTmb5z6miQfbNPQhluElrAH+7rMNkP3m05PEdFrg8GZ4B42NuqRuoe/QVlqYGLPpj2dv4yA2oEzDxNEAebHDLSUq8wdJNiz9DmQScgi25nWodLdqh9/gDubdTML+G8QGuRIF/wDvD2pTkflqPIlQ8tYmE2u69taqsuSX53PxmD1W2+j5H4ep3NvJmGzoc9g+fmmL1nYKaW9oqdSHr7u5+M+lCCfhNAyElwpPSmKXVERY1rA1KCamQNICiY6CNZ0o4F1Ee+Po78+gMAULclSnaFGpBNbmCQpsDKhQnG0+TR94kQXrO4kNsUmj5GxCFgFVqXBQAHYAJ2xeTIvBw/1SUtcrRICxxMKBSC2I9Fu/3RfDkZPq1V/cv//aAAwDAQACAAMAAAAQ8888888888888888888888888888888888888888888888888888888888888888884coQcYo4gY8884UoQ00oY88888scocU8ksQU8888888888888888888888888888888888888888888888888888888888888888888//EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQMBAT8QKf/EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQIBAT8QKf/EACQQAQABAwQCAgMBAAAAAAAAAAERACFREDFBYYHwIHEwcJGh/9oACAEBAAE/EP38PG0iT4F0RROTuqgkgJIj9JRG7kKZiyBuO1SEyHfhLj90HOrl1xCCOSnzFRDMINxG0OhgFGAN2nciDgF1VsKOT5okwAG6vFFmaS0lRAAFV1UoEDg9oacAhKphRJEyhGEdvwERM4glGNhAC2CE2MGiZRQtMz3J70Qc2cKYxowgw2RONBXtsFXPCclOjwekqsiZCDB95laLr1iJSjkCMYVW6gBQDXJBIcPwkHKa5TM6XLAhLQkiqAPsI/bWxB0UsRoEFeiliSDSxZyU2ZS7SNQB8k7EhvAjIYS6QvyIWRDv4OlPKkMX3IMWyAJ2BiJTqK9tgo5jCwBxwySHFJo49RKj4wxfTTbS5LjCmJZ5HqxoSkokeB0usg5Erczb+wIPNBWt+bVlhMMDTZJrmO+A2AsAAAaPp/8AzhM3YdkCAskZtf3gefRP4K3pM/CK9tgo0+UoEyI8I0oi6C8igwxexmpcuMcucCXA0bFttQGPqB32138mVX/q1QcvX4flgdk9b0mfhFe2waT7Dhr6f/IO+aFOCaWKMOYEvDD1vlCVxAB3I+Ag5S92bLykO6HuldwINwGxuU/ucgEMc88IjSIAldipH+VOQ1cEBSE0tRdB2WZcJwCjPU/NAQAsTfhemoei4wmeZqSeoYmYmmNoLkSDZ04wpi5hcso7B4oiBHkCSIztXKMcEykyi6OghlQQASLSUdAlWMCdAVKAUrCHgAMECAUgmfKRGRQaQt8jFWZpGQjjviSGVlthWYHhprLXHBKryhd/cv8A/9k=" alt="Rivio">
-    </div>
-  </header>
-
-  <section class="hero">
-    <p class="hero-eyebrow">Rivio Workspace · Acesso Rápido</p>
-    <h1>Central Bizdev</h1>
-  
-  </section>
-
-  <div class="divider"></div>
-
-  <div class="grid">
-
-    <a href="https://one.rivio.com.br/entrar" target="_blank" rel="noopener" class="card">
-      <div class="card-top">
-        <div class="card-icon">🚀</div>
-        <span class="card-arrow">↗</span>
-      </div>
-      <div class="card-name">Plataforma Rivio</div>
-      <div class="card-desc">Acesso à visão do cliente no produto 2.0</div>
-    </a>
-
-    <a href="https://rivio.retool.com/auth/login" target="_blank" rel="noopener" class="card">
-      <div class="card-top">
-        <div class="card-icon">🛠</div>
-        <span class="card-arrow">↗</span>
-      </div>
-      <div class="card-name">Retool</div>
-      <div class="card-desc">Dados do backoffice de faturamento</div>
-    </a>
-
-    <a href="https://rivio.pipedrive.com/" target="_blank" rel="noopener" class="card">
-      <div class="card-top">
-        <div class="card-icon">🤝</div>
-        <span class="card-arrow">↗</span>
-      </div>
-      <div class="card-name">Pipedrive</div>
-      <div class="card-desc">Gestão das interações com clientes</div>
-    </a>
-
-    <a href="https://www.notion.so/Bem-vindo-ao-Notion-2bec085d9f0a80da8751ce7ab72dffb7" target="_blank" rel="noopener" class="card">
-      <div class="card-top">
-        <div class="card-icon">📚</div>
-        <span class="card-arrow">↗</span>
-      </div>
-      <div class="card-name">Notion</div>
-      <div class="card-desc">Documentação técnica dos clientes</div>
-    </a>
-
-    <a href="http://linear.app/rivio-tech/" target="_blank" rel="noopener" class="card">
-      <div class="card-top">
-        <div class="card-icon">⚡</div>
-        <span class="card-arrow">↗</span>
-      </div>
-      <div class="card-name">Linear</div>
-      <div class="card-desc">Controle de chamados de desenvolvimento</div>
-    </a>
-
-    <a href="https://receita.riviobizdev.com/" target="_blank" rel="noopener" class="card">
-      <div class="card-top">
-        <div class="card-icon">📈</div>
-        <span class="card-arrow">↗</span>
-      </div>
-      <div class="card-name">Monitoramento de Receita</div>
-      <div class="card-desc">Premissas e projeções de receita</div>
-    </a>
-
-    <a href="http://projetos.riviobizdev.com/" target="_blank" rel="noopener" class="card">
-      <div class="card-top">
-        <div class="card-icon">🗂</div>
-        <span class="card-arrow">↗</span>
-      </div>
-      <div class="card-name">Gestão de Projetos</div>
-      <div class="card-desc">Acompanhamento de projetos com clientes</div>
-    </a>
-
-    <a href="https://app.powerbi.com/groups/me/apps/4cc75315-4d57-4293-8fb1-8ed00270d12c/reports/b5648bd1-994c-49bb-a89a-3e88c3cf3cc9/12e42f835287965eb2c7?ctid=334f4209-63cb-4bd4-91fb-267356e0591e&language=pt-BR&experience=power-bi" target="_blank" rel="noopener" class="card">
-      <div class="card-top">
-        <div class="card-icon">📊</div>
-        <span class="card-arrow">↗</span>
-      </div>
-      <div class="card-name">Power BI · Farmers KPIs</div>
-      <div class="card-desc">KPIs executivos do negócio</div>
-    </a>
-
-    <a href="https://colaborador.convenia.com.br/painel" target="_blank" rel="noopener" class="card">
-      <div class="card-top">
-        <div class="card-icon">👤</div>
-        <span class="card-arrow">↗</span>
-      </div>
-      <div class="card-name">Convênia</div>
-      <div class="card-desc">Reembolsos e dados do colaborador</div>
-    </a>
-
+<!-- ── MAIN APP ── -->
+<div id="app">
+  <div class="bg-layer">
+    <div class="bg-grid-main"></div>
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
   </div>
 
-  <footer>
-    <p>© 2026 Rivio · Uso interno</p>
-  </footer>
+  <div class="wrapper">
+    <header>
+      <div class="logo">
+        <img src="data:image/jpeg;base64,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g5EXmA++X//EACgQAQABAwEIAgMBAQAAAAAAAAERACExYRAgQVFxgZGhsfAwcMHx0f/aAAgBAQABPyH9/S+Ljl4K+s/ystYCDs1lBsA7hSaLgcJ1KC/srRNGKfyMFCPJ2AqC7SoMJVt+qQA6ASrRuBQ0HNY2uBTL8LSKUT78KRuOyEJ+BQWXbzvHheFR0Deier5dV2BraMERgYTU2sw4amjm77Y9isegELRsPMbG7xr2OCesXerpXtZjJ4jubn4yR84i5xxBybHXGPUyUaClChC8CstxXw5D/HFNpKRSBcOjwTmb5z6miQfbNPQhluElrAH+7rMNkP3m05PEdFrg8GZ4B42NuqRuoe/QVlqYGLPpj2dv4yA2oEzDxNEAebHDLSUq8wdJNiz9DmQScgi25nWodLdqh9/gDubdTML+G8QGuRIF/wDvD2pTkflqPIlQ8tYmE2u69taqsuSX53PxmD1W2+j5H4ep3NvJmGzoc9g+fmmL1nYKaW9oqdSHr7u5+M+lCCfhNAyElwpPSmKXVERY1rA1KCamQNICiY6CNZ0o4F1Ee+Po78+gMAULclSnaFGpBNbmCQpsDKhQnG0+TR94kQXrO4kNsUmj5GxCFgFVqXBQAHYAJ2xeTIvBw/1SUtcrRICxxMKBSC2I9Fu/3RfDkZPq1V/cv//aAAwDAQACAAMAAAAQ8888888888888888888888888888888888888888888888888888888888888888884coQcYo4gY8884UoQ00oY88888scocU8ksQU8888888888888888888888888888888888888888888888888888888888888888888//EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQMBAT8QKf/EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQIBAT8QKf/EACQQAQABAwQCAgMBAAAAAAAAAAERACFREDFBYYHwIHEwcJGh/9oACAEBAAE/EP38PG0iT4F0RROTuqgkgJIj9JRG7kKZiyBuO1SEyHfhLj90HOrl1xCCOSnzFRDMINxG0OhgFGAN2nciDgF1VsKOT5okwAG6vFFmaS0lRAAFV1UoEDg9oacAhKphRJEyhGEdvwERM4glGNhAC2CE2MGiZRQtMz3J70Qc2cKYxowgw2RONBXtsFXPCclOjwekqsiZCDB95laLr1iJSjkCMYVW6gBQDXJBIcPwkHKa5TM6XLAhLQkiqAPsI/bWxB0UsRoEFeiliSDSxZyU2ZS7SNQB8k7EhvAjIYS6QvyIWRDv4OlPKkMX3IMWyAJ2BiJTqK9tgo5jCwBxwySHFJo49RKj4wxfTTbS5LjCmJZ5HqxoSkokeB0usg5Erczb+wIPNBWt+bVlhMMDTZJrmO+A2AsAAAaPp/8AzhM3YdkCAskZtf3gefRP4K3pM/CK9tgo0+UoEyI8I0oi6C8igwxexmpcuMcucCXA0bFttQGPqB32138mVX/q1QcvX4flgdk9b0mfhFe2waT7Dhr6f/IO+aFOCaWKMOYEvDD1vlCVxAB3I+Ag5S92bLykO6HuldwINwGxuU/ucgEMc88IjSIAldipH+VOQ1cEBSE0tRdB2WZcJwCjPU/NAQAsTfhemoei4wmeZqSeoYmYmmNoLkSDZ04wpi5hcso7B4oiBHkCSIztXKMcEykyi6OghlQQASLSUdAlWMCdAVKAUrCHgAMECAUgmfKRGRQaQt8jFWZpGQjjviSGVlthWYHhprLXHBKryhd/cv8A/9k=" alt="Rivio">
+      </div>
+      <div class="user-info">
+        <img id="user-avatar" src="" alt="">
+        <span id="user-name"></span>
+        <button class="logout-btn" onclick="signOut()">Sair</button>
+      </div>
+    </header>
 
+    <section class="hero">
+      <p class="hero-eyebrow">Rivio Workspace · Acesso Rápido</p>
+      <h1>Central Bizdev</h1>
+    </section>
+
+    <div class="divider"></div>
+
+    <p class="section-label">Geral</p>
+    <div class="grid">
+
+      <a href="https://one.rivio.com.br/entrar" target="_blank" rel="noopener" class="card">
+        <div class="card-top"><div class="card-icon">🚀</div><span class="card-arrow">↗</span></div>
+        <div class="card-name">Plataforma Rivio</div>
+        <div class="card-desc">Acesso à visão do cliente no produto 2.0</div>
+      </a>
+
+      <a href="https://www.notion.so/Bem-vindo-ao-Notion-2bec085d9f0a80da8751ce7ab72dffb7" target="_blank" rel="noopener" class="card">
+        <div class="card-top"><div class="card-icon">📚</div><span class="card-arrow">↗</span></div>
+        <div class="card-name">Notion</div>
+        <div class="card-desc">Documentação técnica dos clientes</div>
+      </a>
+
+      <a href="http://linear.app/rivio-tech/" target="_blank" rel="noopener" class="card">
+        <div class="card-top"><div class="card-icon">⚡</div><span class="card-arrow">↗</span></div>
+        <div class="card-name">Linear</div>
+        <div class="card-desc">Controle de chamados de desenvolvimento</div>
+      </a>
+
+      <a href="https://www.figma.com/" target="_blank" rel="noopener" class="card">
+        <div class="card-top"><div class="card-icon">🎨</div><span class="card-arrow">↗</span></div>
+        <div class="card-name">Figma</div>
+        <div class="card-desc">Acesso a todos os mapeamentos</div>
+      </a>
+
+      <a href="https://colaborador.convenia.com.br/painel" target="_blank" rel="noopener" class="card">
+        <div class="card-top"><div class="card-icon">👤</div><span class="card-arrow">↗</span></div>
+        <div class="card-name">Convênia</div>
+        <div class="card-desc">Reembolsos e dados do colaborador</div>
+      </a>
+
+    </div>
+
+    <p class="section-label">Aplicativos</p>
+    <div class="grid">
+
+      <a href="https://receita.riviobizdev.com/" target="_blank" rel="noopener" class="card">
+        <div class="card-top"><div class="card-icon">📈</div><span class="card-arrow">↗</span></div>
+        <div class="card-name">Monitoramento de Receita</div>
+        <div class="card-desc">Premissas e projeções de receita</div>
+      </a>
+
+      <a href="https://deployment.riviobizdev.com/" target="_blank" rel="noopener" class="card">
+        <div class="card-top"><div class="card-icon">🛰</div><span class="card-arrow">↗</span></div>
+        <div class="card-name">Deployment 2.0</div>
+        <div class="card-desc">Ferramenta execução produto unificado</div>
+      </a>
+
+      <a href="http://central-regras.riviobizdev.com/" target="_blank" rel="noopener" class="card">
+        <div class="card-top"><div class="card-icon">📋</div><span class="card-arrow">↗</span></div>
+        <div class="card-name">Central de Regras</div>
+        <div class="card-desc">Acompanhamento regras auditoria</div>
+      </a>
+
+    </div>
+
+    <footer>
+      <p>© 2026 Rivio · Uso interno</p>
+    </footer>
+  </div>
 </div>
+
+<script>
+  const CLIENT_ID = '33539430279-78qgfo31edm6rpqrp5cgen1e6u9bpsru.apps.googleusercontent.com';
+  const ALLOWED_DOMAIN = 'rivio.com.br';
+
+  // Check if already authenticated in this session
+  const savedUser = sessionStorage.getItem('rivio_user');
+  if (savedUser) {
+    showApp(JSON.parse(savedUser));
+  }
+
+  function signInWithGoogle() {
+    google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: 'email profile',
+      callback: async (tokenResponse) => {
+        if (tokenResponse.error) return;
+        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: 'Bearer ' + tokenResponse.access_token }
+        });
+        const user = await res.json();
+        const domain = user.email.split('@')[1];
+        if (domain === ALLOWED_DOMAIN) {
+          sessionStorage.setItem('rivio_user', JSON.stringify(user));
+          showApp(user);
+        } else {
+          document.getElementById('auth-error').style.display = 'block';
+        }
+      }
+    }).requestAccessToken();
+  }
+
+  function showApp(user) {
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('user-name').textContent = user.name || user.email;
+    if (user.picture) {
+      document.getElementById('user-avatar').src = user.picture;
+      document.getElementById('user-avatar').style.display = 'block';
+    }
+  }
+
+  function signOut() {
+    sessionStorage.removeItem('rivio_user');
+    location.reload();
+  }
+</script>
 
 </body>
 </html>
