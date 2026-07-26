@@ -518,12 +518,41 @@
   const CLIENT_ID = '33539430279-78qgfo31edm6rpqrp5cgen1e6u9bpsru.apps.googleusercontent.com';
   const ALLOWED_DOMAIN = 'rivio.com.br';
 
-  // Check if already authenticated in this session
+  // 1. Se já tem usuário salvo, mostra app imediatamente
   const savedUser = localStorage.getItem('rivio_user');
   if (savedUser) {
     showApp(JSON.parse(savedUser));
   }
 
+  // 2. One Tap: reautentica silenciosamente ao carregar a página
+  window.addEventListener('load', () => {
+    google.accounts.id.initialize({
+      client_id: CLIENT_ID,
+      callback: handleOneTap,
+      auto_select: true,          // tenta login automático sem interação
+      cancel_on_tap_outside: false
+    });
+
+    // Só exibe o prompt se ainda não estiver logado
+    if (!localStorage.getItem('rivio_user')) {
+      google.accounts.id.prompt();
+    }
+  });
+
+  // Callback do One Tap (retorna JWT)
+  async function handleOneTap(response) {
+    const payload = parseJwt(response.credential);
+    const domain = payload.email.split('@')[1];
+    if (domain === ALLOWED_DOMAIN) {
+      const user = { name: payload.name, email: payload.email, picture: payload.picture };
+      localStorage.setItem('rivio_user', JSON.stringify(user));
+      showApp(user);
+    } else {
+      document.getElementById('auth-error').style.display = 'block';
+    }
+  }
+
+  // Login manual via botão (OAuth popup)
   function signInWithGoogle() {
     google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID,
@@ -557,7 +586,14 @@
 
   function signOut() {
     localStorage.removeItem('rivio_user');
+    google.accounts.id.disableAutoSelect();
     location.reload();
+  }
+
+  // Decodifica JWT do One Tap sem biblioteca externa
+  function parseJwt(token) {
+    const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(atob(base64));
   }
 </script>
 
